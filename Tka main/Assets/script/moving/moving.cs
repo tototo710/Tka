@@ -6,6 +6,8 @@ public class moving : MonoBehaviour
 {
     Rigidbody2D rb;
     public float lastRotation = 1; // 플레이어가 바라보고 있는 방향.
+    public float speed = 5;
+    public float jumpPower = 5;
     
     void Start()
     {
@@ -15,17 +17,27 @@ public class moving : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("a")&&lastRotation==1){
-                    transform.localScale = new Vector3(-1,1,0);
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        horizontalInput = Mathf.Round(horizontalInput);
+        if (horizontalInput != 0)
+        {
+            transform.localScale = new Vector3(horizontalInput, 1, 1);
         }
-        if(Input.GetKeyDown("d")&&lastRotation==-1){
-                transform.localScale = new Vector3(1,1,0);
-            }
-        float horizontalInput = Input.GetAxis("Horizontal");
-         if (horizontalInput != 0)
-            {
-                if (horizontalInput > 0) { lastRotation = 1; }
-                else { lastRotation = -1; }
-            }
+        rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
+        if (Input.GetKeyDown(KeyCode.Space) && gg())
+        {
+            jump();
+        }
+    }
+
+
+    bool gg()
+    {
+        return Physics2D.Raycast(transform.position, Vector2.down, 1.2f, 1<<LayerMask.NameToLayer("Ground"));
+    }
+    
+    void jump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpPower);
     }
 }
