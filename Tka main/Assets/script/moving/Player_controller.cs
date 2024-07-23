@@ -15,10 +15,7 @@ public class Player_controller : MonoBehaviour
     private bool canJump = true; // 점프 가능 여부
     public bool isGround = false; // 플레이어가 바닥에 있는지 여부
     public float lastRotation = 1; // 플레이어가 바라보고 있는 방향.
-    public int speeder;
-    
     Transform tr;
-    Collider2D col;
     Rigidbody2D rb; // 플레이어의 Rigidbody2D 컴포넌트
     SpriteRenderer spriteRenderer;
 
