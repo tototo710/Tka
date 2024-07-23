@@ -15,7 +15,7 @@ public class Dash : MonoBehaviour
     GameObject player;
     void Start()
     {
-        player = GameObject.Find("Player");
+        player = GameObject.FindWithTag("Player");
         rb = GetComponent<Rigidbody2D>();
         cancontrol =true;
         isdashing = false;
@@ -26,10 +26,9 @@ public class Dash : MonoBehaviour
         if(Input.GetMouseButtonDown(1))
         {
            x = transform.position.x;
-
            if(player.GetComponent<Player_controller>().lastRotation==1){
             if (cancontrol&&dash_timer==0){
-                dash_timer =2;
+                dash_timer =1.2f;
                 rb.constraints = RigidbodyConstraints2D.FreezePositionY;
                 rb.velocity = new Vector2(0,0);
                 
@@ -39,7 +38,7 @@ public class Dash : MonoBehaviour
            }
            if(player.GetComponent<Player_controller>().lastRotation==-1){
             if(cancontrol&&dash_timer ==0){
-                dash_timer=1.5f;
+                dash_timer=1.2f;
                 rb.constraints = RigidbodyConstraints2D.FreezePositionY;
                 rb.velocity = new Vector2(0,0);
 
@@ -51,23 +50,29 @@ public class Dash : MonoBehaviour
     }
 
     IEnumerator Start_Dash(){
-        for (int i = 1; i <= 6; i++)
+        player.GetComponent<Player_controller>().canmove = false;
+        player.GetComponent<attack>().canattack = false;
+        for (int i = 1; i <= 2; i++)
         {
-            rb.AddForce(new Vector2(1000*this.GetComponent<Player_controller>().lastRotation,0));
+            rb.AddForce(new Vector2(1300*this.GetComponent<Player_controller>().lastRotation,0));
             cancontrol =false;
             isdashing = true;
-            Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"));
+            // Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"));
             rb.constraints = RigidbodyConstraints2D.FreezePositionY;
             yield return new WaitForSeconds(0.001f);
         }
         
     }
 
-        IEnumerator End_Dash(){
+    IEnumerator End_Dash(){
         isdashing = false;
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.15f);
+        rb.velocity = new Vector2(0,0);
+        yield return new WaitForSeconds(0.2f);
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         cancontrol =true;
-        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"),false);
+        // Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"),false);
+        player.GetComponent<Player_controller>().canmove = true;
+        player.GetComponent<attack>().canattack = true;
     }
 }

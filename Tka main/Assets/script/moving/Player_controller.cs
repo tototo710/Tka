@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player_controller : MonoBehaviour
@@ -18,6 +19,7 @@ public class Player_controller : MonoBehaviour
     Transform tr;
     Rigidbody2D rb; // 플레이어의 Rigidbody2D 컴포넌트
     SpriteRenderer spriteRenderer;
+    public bool canmove = true;
 
     void Awake()
     {
@@ -35,14 +37,12 @@ public class Player_controller : MonoBehaviour
 
     void Update()
     {
-
-        // 플레이어에게 가해지는 마찰력을 계산합니다.
-        Vector2 frictionForce = new Vector2(-rb.velocity.x * friction, 0);
-        rb.AddForce(frictionForce, ForceMode2D.Force);
-        // 플레이어의 속력을 제한하여 최대 속력을 유지합니다.
-        Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
-        rb.velocity = clampedVelocity;
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        if(canmove){
+            // 플레이어에게 가해지는 마찰력을 계산합니다.
+            Vector2 frictionForce = new Vector2(-rb.velocity.x * friction, 0);
+            rb.AddForce(frictionForce, ForceMode2D.Force);
+            // 플레이어의 속력을 제한하여 최대 속력을 유지합니다.
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
             horizontalInput = Mathf.Round(horizontalInput);
             if (horizontalInput != 0)
             {
@@ -57,7 +57,7 @@ public class Player_controller : MonoBehaviour
                 else { lastRotation = -1; }
             }
 
-        // 플레이어에게 이동 힘을 가합니다.
+            // 플레이어에게 이동 힘을 가합니다.
             rb.AddForce(moveDirection * speed);
 
             if(Mathf.Abs(rb.velocity.y)<0.0001f)
@@ -73,7 +73,9 @@ public class Player_controller : MonoBehaviour
                     Jump();
                 }
             }
-        
+        }
+        Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
+        rb.velocity = clampedVelocity;
     }
 
 

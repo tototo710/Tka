@@ -7,7 +7,7 @@ public class attack : MonoBehaviour
 {
     public int damage = 1;
     public float attackRange = 0.5f;
-    bool canattack = true;
+    public bool canattack = true;
     // Start is called before the first frame update
     void Start()
     {

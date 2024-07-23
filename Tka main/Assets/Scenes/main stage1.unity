@@ -3905,6 +3905,7 @@ MonoBehaviour:
     m_Bits: 64
   isGround: 0
   lastRotation: 1
+  canmove: 1
 --- !u!61 &1342175911
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3973,18 +3974,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342175903}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4c7fe5f74414084aa8ace013d293fa7, type: 3}
+  m_Script: {fileID: 11500000, guid: c36ae054854127d4490e38acfcfed497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lenth: 2
   closestEnemy: {fileID: 0}
-  x: 0
   rb: {fileID: 0}
-  y: 0
   cancontrol: 1
-  dash_timer: 0
   isdashing: 0
-  player: {fileID: 0}
 --- !u!1 &1494083734
 GameObject:
   m_ObjectHideFlags: 0
