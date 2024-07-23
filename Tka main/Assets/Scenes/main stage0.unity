@@ -577,7 +577,7 @@ Transform:
   m_GameObject: {fileID: 360502556}
   serializedVersion: 2
   m_LocalRotation: {x: -0.010756819, y: -0.051591836, z: -0.409709, w: 0.9106927}
-  m_LocalPosition: {x: 25.09, y: 0.62, z: 1.15}
+  m_LocalPosition: {x: 22.71, y: -2.08, z: 1.17}
   m_LocalScale: {x: -0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -797,7 +797,7 @@ Transform:
   m_GameObject: {fileID: 501255916}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25.52, y: 1.833, z: 0}
+  m_LocalPosition: {x: 23.27, y: 0.89, z: 0}
   m_LocalScale: {x: 0.7, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -882,7 +882,7 @@ Transform:
   m_GameObject: {fileID: 540165696}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.21620974, w: 0.97634697}
-  m_LocalPosition: {x: 12.4, y: -1.79, z: 0}
+  m_LocalPosition: {x: 11.49, y: -2.02, z: 0}
   m_LocalScale: {x: 0.46631923, y: 0.41273212, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1706,7 +1706,7 @@ Transform:
   m_GameObject: {fileID: 687274591}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.1351825, w: 0.9908207}
-  m_LocalPosition: {x: 25.99, y: -0.97, z: 0}
+  m_LocalPosition: {x: 24.1, y: -2.83, z: 0}
   m_LocalScale: {x: 0.40000004, y: 0.40000004, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2427,7 +2427,7 @@ Transform:
   m_GameObject: {fileID: 1257728249}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.5, y: 1.89, z: 0}
+  m_LocalPosition: {x: 14.15, y: 0.73, z: 0}
   m_LocalScale: {x: 0.8269329, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2702,10 +2702,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342175903}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a33c5d3d14fddcf47ac77dff21b56052, type: 3}
+  m_Script: {fileID: 11500000, guid: 7338e233d3ae77e4185244ae8e4f3668, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 190
+  jumpingPower: 1200
+  friction: 9
+  maxSpeed: 150
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isGround: 0
   lastRotation: 1
+  speeder: 0
 --- !u!1 &1358245981
 GameObject:
   m_ObjectHideFlags: 0
@@ -2732,7 +2741,7 @@ Transform:
   m_GameObject: {fileID: 1358245981}
   serializedVersion: 2
   m_LocalRotation: {x: -0.010756819, y: -0.051591836, z: -0.409709, w: 0.9106927}
-  m_LocalPosition: {x: 24.79, y: -0.5999999, z: 1.15}
+  m_LocalPosition: {x: 22.57, y: -0.9, z: 1}
   m_LocalScale: {x: -0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
