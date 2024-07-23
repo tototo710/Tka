@@ -54,7 +54,7 @@ public class Dash : MonoBehaviour
         player.GetComponent<attack>().canattack = false;
         for (int i = 1; i <= 2; i++)
         {
-            rb.AddForce(new Vector2(1300*this.GetComponent<Player_controller>().lastRotation,0));
+            rb.AddForce(new Vector2(1400*this.GetComponent<Player_controller>().lastRotation,0));
             cancontrol =false;
             isdashing = true;
             // Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"));
@@ -66,9 +66,9 @@ public class Dash : MonoBehaviour
 
     IEnumerator End_Dash(){
         isdashing = false;
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.1f);
         rb.velocity = new Vector2(0,0);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         cancontrol =true;
         // Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"),false);
