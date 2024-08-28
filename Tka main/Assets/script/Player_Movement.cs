@@ -49,11 +49,10 @@ public class Player_Movement : MonoBehaviour
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
         rb.velocity = clampedVelocity;
-        if(Input.GetKeyDown("a")&&lastRotation==1){
-                transform.localScale = new Vector3(-1f,1f,0);
-        }
-        if(Input.GetKeyDown("d")&&lastRotation==-1){
-            transform.localScale = new Vector3(1f,1f,0);
+        int dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:0;
+        if(dir!=0)
+        {
+            transform.localScale = new Vector3(dir, 1, 1);
         }
         if(Input.GetButton("Horizontal")){
             // Run.SetBool("Isrunning",true);
@@ -90,6 +89,6 @@ public class Player_Movement : MonoBehaviour
 
     private void Jump()
     {
-        rb.AddForce(new Vector2(0, jumpingPower / 28.0f * 23.5f));
+        rb.AddForce(new Vector2(0, jumpingPower / 28.0f * 23.5f), ForceMode2D.Impulse);
     }
 }
