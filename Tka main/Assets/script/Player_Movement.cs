@@ -15,13 +15,10 @@ public class Player_Movement : MonoBehaviour
     // public Transform groundCheck; // 바닥 체크 위치
 
     public bool isGround = false; // 플레이어가 바닥에 있는지 여부
-    public float lastRotation = 1; // 플레이어가 바라보고 있는 방향.
-    public int speeder;
     
     Transform tr;
     // Collider2D col;
     Rigidbody2D rb; // 플레이어의 Rigidbody2D 컴포넌트
-    Collider2D footC; // 발 충돌체
     SpriteRenderer spriteRenderer;
 
     void Awake()
@@ -54,22 +51,9 @@ public class Player_Movement : MonoBehaviour
         {
             transform.localScale = new Vector3(dir, 1, 1);
         }
-        if(Input.GetButton("Horizontal")){
-            // Run.SetBool("Isrunning",true);
-            speeder=1;
-        }
-        else{
-            // Run.SetBool("Isrunning",false);
-            speeder=0;
-        }
         float horizontalInput = Input.GetAxis("Horizontal"); // 수평 입력 값
         Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
 
-        if (horizontalInput != 0)
-        {
-            if (horizontalInput > 0) { lastRotation = 1; }
-            else { lastRotation = -1; }
-        }
 
     // 플레이어에게 이동 힘을 가합니다.
         rb.AddForce(moveDirection * speed);
@@ -83,7 +67,21 @@ public class Player_Movement : MonoBehaviour
                 Jump();
             }
         }
+
+        Attack();
         
+    }
+
+    void Attack()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            Run.SetBool("Run", true);
+        }
+        else if(Input.GetMouseButtonUp(0))
+        {
+            Run.SetBool("Run", false);
+        }
     }
 
 
