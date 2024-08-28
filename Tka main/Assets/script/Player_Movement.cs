@@ -90,6 +90,6 @@ public class Player_Movement : MonoBehaviour
 
     private void Jump()
     {
-        rb.AddForce(new Vector2(0, jumpingPower / 28.0f * 23.5f), ForceMode2D.Impulse);
+        rb.AddForce(new Vector2(0, jumpingPower / 28.0f * 23.5f));
     }
 }
