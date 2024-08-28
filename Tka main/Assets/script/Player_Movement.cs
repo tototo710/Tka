@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player_Movement : MonoBehaviour
 {
@@ -38,6 +40,9 @@ public class Player_Movement : MonoBehaviour
 
     void Update()
     {
+        if(transform.position.y<-50){
+            transform.position = new Vector2(0,0);
+        }
         if(Mathf.Abs(rb.velocity.y)<0.0001f)    isGround = true;
 
         // 플레이어에게 가해지는 마찰력을 계산합니다.
@@ -87,6 +92,6 @@ public class Player_Movement : MonoBehaviour
 
     private void Jump()
     {
-        rb.AddForce(new Vector2(0, jumpingPower / 28.0f * 23.5f), ForceMode2D.Impulse);
+        rb.AddForce(new Vector2(0, jumpingPower *0.8f), ForceMode2D.Impulse);
     }
 }
