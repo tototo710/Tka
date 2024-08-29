@@ -116,18 +116,18 @@ public class Player_Movement : MonoBehaviour
             {
                 isAttacking = true;
                 Time.timeScale = 0.6f;
-                StopCoroutine(Post_Process_change(volume, 0.1f));
+                // StopCoroutine(Post_Process_change(volume, 0.1f));
                 volume.weight = 0;
-                StartCoroutine(Post_Process_change(volume, 0.1f));
+                // StartCoroutine(Post_Process_change(volume, 0.1f));
                 StartCoroutine(AttackCoroutine());
             }
-            else
+            else if(Run.GetBool("Attack") == true && Run.GetBool("Attack1") == false)
             {
-                StopCoroutine(AttackCoroutine(0));
+                // StopCoroutine(AttackCoroutine(0));
                 Time.timeScale = 0.4f;
-                StopCoroutine(Post_Process_change(volume, 0.1f));
+                // StopCoroutine(Post_Process_change(volume, 0.1f));
                 volume.weight = 0;
-                StartCoroutine(Post_Process_change(volume, 0.1f));
+                // StartCoroutine(Post_Process_change(volume, 0.1f));
                 StartCoroutine(AttackCoroutine(1));
             }
         }
@@ -157,26 +157,30 @@ public class Player_Movement : MonoBehaviour
                 // rb.velocity = Vector2.zero;
                 rb.AddForce(new Vector2(transform.localScale.x * 4, 0), ForceMode2D.Impulse);
                 StartCoroutine(Camera_Shake(4, 0.2f));
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(0.5f);
                 break;
             case 1:
+                Run.SetBool("Attack", true);
                 Run.SetBool("Attack1", true);
                 // rb.velocity = Vector2.zero;
                 rb.AddForce(new Vector2(transform.localScale.x * 8, 0), ForceMode2D.Impulse);
                 StartCoroutine(Camera_Shake(1, 0.2f, 5));
-                yield return new WaitForSeconds(1.5f); // Increase the duration of Attack1 animation
+                yield return new WaitForSeconds(.5f); // Increase the duration of Attack1 animation
                 break;
         }
         // 플레이어에게 가해지는 마찰력을 계산합니다.
         Vector2 frictionForce = new Vector2(-rb.velocity.x * friction*2, 0);
         rb.AddForce(frictionForce, ForceMode2D.Force);
-    
-        Run.SetBool("Attack", false);
-        // {
-        //     yield break;
-        // }
+        if(attack_type == 0)
+        {
+            Run.SetBool("Attack", false);
+        }
+        else
+        {
+            Run.SetBool("Attack", false);
+            Run.SetBool("Attack1", false);
+        }
         yield return new WaitForSecondsRealtime(0.05f);
-        Run.SetBool("Attack1", false);
         StartCoroutine(Delay(1.5f));
         Time.timeScale = 1f;
         isAttacking = false;
