@@ -19,7 +19,7 @@ public class Player_Movement : MonoBehaviour
     // public Transform groundCheck; // 바닥 체크 위치
 
     public bool isGround = false; // 플레이어가 바닥에 있는지 여부
-    public bool is_attacking = false; // 플레이어가 공격 중인지 여부
+    // public bool is_attacking = false; // 플레이어가 공격 중인지 여부
     
     Transform tr;
     // Collider2D col;
@@ -28,6 +28,8 @@ public class Player_Movement : MonoBehaviour
     public Camera cam;
 
     public PostProcessVolume volume;
+    bool isAttacking = false;
+    public bool on_delay = false;
 
 
     void Awake()
@@ -68,10 +70,16 @@ public class Player_Movement : MonoBehaviour
 
 
         Attack();
-        if(is_attacking == true)   return;
+        if(Run.GetBool("Attack"))   return;
         Move();
     }
     public int dir = 1;
+    IEnumerator Delay(float time)
+    {
+        on_delay = true;
+        yield return new WaitForSeconds(time);
+        on_delay = false;
+    }
     void Move()
     {
         if(transform.position.y<-50){
@@ -99,23 +107,23 @@ public class Player_Movement : MonoBehaviour
         rb.AddForce(moveDirection * speed);
 
     }
-    bool on_2nd_attack = false;
+    // bool on_2nd_attack = false;
     void Attack()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && !on_delay)
         {
-            if(is_attacking == false)
+            if(Run.GetBool("Attack") == false && Run.GetBool("Attack1") == false)
             {
-                is_attacking = true;
+                isAttacking = true;
                 Time.timeScale = 0.6f;
                 StopCoroutine(Post_Process_change(volume, 0.1f));
                 volume.weight = 0;
                 StartCoroutine(Post_Process_change(volume, 0.1f));
                 StartCoroutine(AttackCoroutine());
             }
-            else if(on_2nd_attack == false)
+            else
             {
-                on_2nd_attack = true;
+                StopCoroutine(AttackCoroutine(0));
                 Time.timeScale = 0.4f;
                 StopCoroutine(Post_Process_change(volume, 0.1f));
                 volume.weight = 0;
@@ -142,7 +150,6 @@ public class Player_Movement : MonoBehaviour
     }
     IEnumerator AttackCoroutine(int attack_type = 0)
     {
-        
         switch(attack_type)
         {
             case 0:
@@ -150,30 +157,29 @@ public class Player_Movement : MonoBehaviour
                 // rb.velocity = Vector2.zero;
                 rb.AddForce(new Vector2(transform.localScale.x * 4, 0), ForceMode2D.Impulse);
                 StartCoroutine(Camera_Shake(4, 0.2f));
-                yield return new WaitForSeconds(0.25f);
-                is_attacking = false;
-                Run.SetBool("Attack", false);
+                yield return new WaitForSeconds(3f);
                 break;
             case 1:
                 Run.SetBool("Attack1", true);
                 // rb.velocity = Vector2.zero;
-                rb.AddForce(new Vector2(transform.localScale.x * 4, 0), ForceMode2D.Impulse);
-                StartCoroutine(Camera_Shake(1, 0.2f, 4));
-                yield return new WaitForSeconds(0.25f);
-                on_2nd_attack = false;
+                rb.AddForce(new Vector2(transform.localScale.x * 8, 0), ForceMode2D.Impulse);
+                StartCoroutine(Camera_Shake(1, 0.2f, 5));
+                yield return new WaitForSeconds(1.5f); // Increase the duration of Attack1 animation
                 break;
         }
         // 플레이어에게 가해지는 마찰력을 계산합니다.
         Vector2 frictionForce = new Vector2(-rb.velocity.x * friction*2, 0);
         rb.AddForce(frictionForce, ForceMode2D.Force);
-
-        // if(on_2nd_attack == true)
+    
+        Run.SetBool("Attack", false);
         // {
         //     yield break;
         // }
         yield return new WaitForSecondsRealtime(0.05f);
         Run.SetBool("Attack1", false);
+        StartCoroutine(Delay(1.5f));
         Time.timeScale = 1f;
+        isAttacking = false;
     }
 
     IEnumerator Camera_Shake(int cnt, float time, float power = 0.5f)
