@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UIElements;
@@ -46,7 +47,7 @@ public class Player_Movement : MonoBehaviour
 
     void Update()
     {
-        if(Mathf.Abs(rb.velocity.x)>0.1f)
+        if(Input.GetAxisRaw("Horizontal") != 0)
         {
             Run.SetBool("Run", true);
         }
@@ -70,6 +71,7 @@ public class Player_Movement : MonoBehaviour
         if(is_attacking == true)   return;
         Move();
     }
+    public int dir = 1;
     void Move()
     {
         if(transform.position.y<-50){
@@ -80,7 +82,7 @@ public class Player_Movement : MonoBehaviour
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
         rb.velocity = clampedVelocity;
-        int dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:0;
+        dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:0;
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
@@ -97,7 +99,7 @@ public class Player_Movement : MonoBehaviour
         rb.AddForce(moveDirection * speed);
 
     }
-
+    bool on_2nd_attack = false;
     void Attack()
     {
         if(Input.GetMouseButtonDown(0))
@@ -109,8 +111,16 @@ public class Player_Movement : MonoBehaviour
                 StopCoroutine(Post_Process_change(volume, 0.1f));
                 volume.weight = 0;
                 StartCoroutine(Post_Process_change(volume, 0.1f));
-                Run.SetBool("Attack", true);
                 StartCoroutine(AttackCoroutine());
+            }
+            else if(on_2nd_attack == false)
+            {
+                on_2nd_attack = true;
+                Time.timeScale = 0.4f;
+                StopCoroutine(Post_Process_change(volume, 0.1f));
+                volume.weight = 0;
+                StartCoroutine(Post_Process_change(volume, 0.1f));
+                StartCoroutine(AttackCoroutine(1));
             }
         }
     }
@@ -130,29 +140,51 @@ public class Player_Movement : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
     }
-    IEnumerator AttackCoroutine()
+    IEnumerator AttackCoroutine(int attack_type = 0)
     {
-        yield return new WaitForSeconds(0.1f);
+        
+        switch(attack_type)
+        {
+            case 0:
+                Run.SetBool("Attack", true);
+                // rb.velocity = Vector2.zero;
+                rb.AddForce(new Vector2(transform.localScale.x * 4, 0), ForceMode2D.Impulse);
+                StartCoroutine(Camera_Shake(4, 0.2f));
+                yield return new WaitForSeconds(0.25f);
+                is_attacking = false;
+                Run.SetBool("Attack", false);
+                break;
+            case 1:
+                Run.SetBool("Attack1", true);
+                // rb.velocity = Vector2.zero;
+                rb.AddForce(new Vector2(transform.localScale.x * 4, 0), ForceMode2D.Impulse);
+                StartCoroutine(Camera_Shake(1, 0.2f, 4));
+                yield return new WaitForSeconds(0.25f);
+                on_2nd_attack = false;
+                break;
+        }
         // 플레이어에게 가해지는 마찰력을 계산합니다.
         Vector2 frictionForce = new Vector2(-rb.velocity.x * friction*2, 0);
         rb.AddForce(frictionForce, ForceMode2D.Force);
-        // rb.velocity = Vector2.zero;
-        rb.AddForce(new Vector2(transform.localScale.x * 3, 0), ForceMode2D.Impulse);
-        StartCoroutine(Camera_Shake(4, 0.2f));
-        yield return new WaitForSeconds(0.25f);
-        is_attacking = false;
-        Run.SetBool("Attack", false);
+
+        // if(on_2nd_attack == true)
+        // {
+        //     yield break;
+        // }
+        yield return new WaitForSecondsRealtime(0.05f);
+        Run.SetBool("Attack1", false);
         Time.timeScale = 1f;
     }
 
-    IEnumerator Camera_Shake(int cnt, float time, float power = 0.3f)
+    IEnumerator Camera_Shake(int cnt, float time, float power = 0.5f)
     {
         Vector3 initialPosition = cam.transform.position;
         for(int i=0; i<cnt; i++)
         {
-            cam.transform.position =Random.insideUnitSphere*power + initialPosition;
-            yield return new WaitForSeconds(time/cnt);
+            cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(1*dir*power, -1*power,0), Time.deltaTime*15);
+            yield return new WaitForFixedUpdate();
         }
+
     }
 
 
