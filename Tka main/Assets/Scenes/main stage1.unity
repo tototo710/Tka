@@ -1053,7 +1053,6 @@ MonoBehaviour:
   isGround: 0
   cam: {fileID: 677396202}
   volume: {fileID: 677396204}
-  canAttack: 1
   on_delay: 0
   dir: 1
 --- !u!114 &1342175914

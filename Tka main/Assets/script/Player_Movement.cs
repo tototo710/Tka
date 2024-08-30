@@ -73,6 +73,7 @@ public class Player_Movement : MonoBehaviour
         if(Run.GetBool("shakecam"))
         {
             StartCoroutine(Camera_Shake(4, 0.5f, 2f));
+            rb.AddForce(new Vector2(6*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
         if(Run.GetBool("Attack"))   return;
@@ -89,7 +90,7 @@ public class Player_Movement : MonoBehaviour
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
         rb.velocity = clampedVelocity;
-        dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:dir;
+        dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:0;
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
@@ -120,7 +121,7 @@ public class Player_Movement : MonoBehaviour
         Vector3 initialPosition = cam.transform.position;
         for(int i=0; i<cnt; i++)
         {
-            cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(1*dir*power, -1*power,0), Time.deltaTime*15);
+            cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(transform.localScale.x*power, -1*power,0), Time.deltaTime*15);
             yield return new WaitForFixedUpdate();
         }
     }
