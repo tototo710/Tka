@@ -70,16 +70,15 @@ public class Player_Movement : MonoBehaviour
 
 
         Attack();
+        if(Run.GetBool("shakecam"))
+        {
+            StartCoroutine(Camera_Shake(4, 0.5f, 2f));
+            Run.SetBool("shakecam", false);
+        }
         if(Run.GetBool("Attack"))   return;
         Move();
     }
     public int dir = 1;
-    IEnumerator Delay(float time)
-    {
-        on_delay = true;
-        yield return new WaitForSeconds(time);
-        on_delay = false;
-    }
     void Move()
     {
         if(transform.position.y<-50){
@@ -90,14 +89,14 @@ public class Player_Movement : MonoBehaviour
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
         rb.velocity = clampedVelocity;
-        dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:0;
+        dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:dir;
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
         }
         float horizontalInput = Input.GetAxis("Horizontal"); // 수평 입력 값
         Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
-                
+
         // 플레이어에게 가해지는 마찰력을 계산합니다.
         Vector2 frictionForce = new Vector2(-rb.velocity.x * friction, 0);
         rb.AddForce(frictionForce, ForceMode2D.Force);
@@ -107,14 +106,13 @@ public class Player_Movement : MonoBehaviour
         rb.AddForce(moveDirection * speed);
 
     }
-    // bool on_2nd_attack = false;
     void Attack()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && Run.GetBool("onLastattack")==false)
         {
             Run.SetTrigger("Attack");
-            StartCoroutine(Camera_Shake(3, 0.1f, 0.5f));
         }
+
     }
 
     IEnumerator Camera_Shake(int cnt, float time, float power = 0.5f)
@@ -125,7 +123,6 @@ public class Player_Movement : MonoBehaviour
             cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(1*dir*power, -1*power,0), Time.deltaTime*15);
             yield return new WaitForFixedUpdate();
         }
-
     }
 
 
