@@ -123,7 +123,7 @@ public class Player_Movement : MonoBehaviour
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
         rb.velocity = clampedVelocity;
-        dir = rb.velocity.x > 0?1:rb.velocity.x<0?-1:0;
+        dir = rb.velocity.x > 0.1f?1:rb.velocity.x<0.1f?-1:0;
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
