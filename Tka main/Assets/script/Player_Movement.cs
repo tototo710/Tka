@@ -46,7 +46,7 @@ public class Player_Movement : MonoBehaviour
         Run = GetComponent<Animator>();
         jump = GetComponent<Animator>();
     }
-
+    public GameObject impactEffect;
     void Update()
     {
         if(Input.GetAxisRaw("Horizontal") != 0)
@@ -57,31 +57,61 @@ public class Player_Movement : MonoBehaviour
         {
             Run.SetBool("Run", false);
         }
+        if(Mathf.Abs(rb.velocity.y)<0.0001f)
+        {
+            isGround = true;
+            Run.SetBool("on_ground", true);
+        }
+        else
+        {
+            // isGround = false;
+            Run.SetBool("on_ground", false);
+        }
+        Run.SetFloat("y_speed", rb.velocity.y);
 
 
+        Attack();
+        if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
+        {
+            StartCoroutine(late_attack(4, 1, 1f, 0.012f));
+            rb.AddForce(new Vector2(6*transform.localScale.x, 0), ForceMode2D.Impulse);
+            Run.SetBool("shakecam", false);
+        }
+        else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
+        {
+            StartCoroutine(late_attack(4, 1, 2f, 0.012f));
+            rb.AddForce(new Vector2(5*transform.localScale.x, 10), ForceMode2D.Impulse);
+            Run.SetBool("shakecam", false);
+        }
+
+        if(Run.GetBool("land_f_attack"))
+        {
+            StartCoroutine(Camera_Shake(1, -4, 01f));
+            Run.SetBool("land_f_attack", false);
+            Run.SetBool("onattacking", true);
+            Run.SetBool("on_land_attack", true);
+            CancelInvoke("late_back");
+            Invoke("late_back", 0.5f);
+            Instantiate(impactEffect, transform.position + new Vector3(-2.5f, 0, 0), Quaternion.identity);
+            rb.velocity = new Vector2(0,0);
+        }
+        if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack"))   return;
+        Move();
+        
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isGround)
             {
                 isGround = false;
                 Jump();
+                Run.SetTrigger("jump");
             }
         }
-        Attack();
-        if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
-        {
-            StartCoroutine(Camera_Shake(4, -1, 1f));
-            rb.AddForce(new Vector2(6*transform.localScale.x, 0), ForceMode2D.Impulse);
-            Run.SetBool("shakecam", false);
-        }
-        else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
-        {
-            StartCoroutine(Camera_Shake(4, 1, 4f));
-            rb.AddForce(new Vector2(5*transform.localScale.x, 10), ForceMode2D.Impulse);
-            Run.SetBool("shakecam", false);
-        }
-        if(Run.GetBool("Attack"))   return;
-        Move();
+    }
+    void late_back()
+    {
+        Run.SetBool("onattacking", false);
+        Run.SetBool("on_land_attack", false);
     }
     public int dir = 1;
     void Move()
@@ -89,7 +119,6 @@ public class Player_Movement : MonoBehaviour
         if(transform.position.y<-50){
             transform.position = new Vector2(0,0);
         }
-        if(Mathf.Abs(rb.velocity.y)<0.0001f)    isGround = true;
 
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
@@ -113,11 +142,29 @@ public class Player_Movement : MonoBehaviour
     }
     void Attack()
     {
-        if(Input.GetMouseButtonDown(0) && Run.GetBool("onLastattack")==false)
+
+        if(Input.GetMouseButtonDown(0) && Run.GetBool("onLastattack")==false && isGround==true)
         {
             Run.SetTrigger("Attack");
         }
 
+        if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
+        {
+            Run.SetTrigger("onkick");
+            rb.velocity = new Vector2(0,0);
+            StartCoroutine(late_attack(4, 1, 4f, 0.4f/3f));
+        }
+        else if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==false)
+        {
+            Run.SetTrigger("fallattack");
+            Run.SetBool("on_land_attack", true);
+            rb.velocity = new Vector2(0,rb.velocity.y);
+        }
+    }
+    IEnumerator late_attack(int cnt, int y_dir=-1, float power = 0.5f, float delay = 0.4f/3f)
+    {
+        yield return new WaitForSeconds(delay);
+        StartCoroutine(Camera_Shake(cnt, y_dir, power));
     }
 
     IEnumerator Camera_Shake(int cnt, int y_dir=-1, float power = 0.5f)
@@ -133,6 +180,8 @@ public class Player_Movement : MonoBehaviour
 
     private void Jump()
     {
+        Run.SetBool("on_ground", false);
+        rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.AddForce(new Vector2(0, jumpingPower *0.8f), ForceMode2D.Impulse);
     }
 }
