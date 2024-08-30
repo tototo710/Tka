@@ -67,13 +67,17 @@ public class Player_Movement : MonoBehaviour
                 Jump();
             }
         }
-
-
         Attack();
-        if(Run.GetBool("shakecam"))
+        if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
         {
-            StartCoroutine(Camera_Shake(4, 0.5f, 2f));
+            StartCoroutine(Camera_Shake(4, -1, 1f));
             rb.AddForce(new Vector2(6*transform.localScale.x, 0), ForceMode2D.Impulse);
+            Run.SetBool("shakecam", false);
+        }
+        else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
+        {
+            StartCoroutine(Camera_Shake(4, 1, 4f));
+            rb.AddForce(new Vector2(5*transform.localScale.x, 10), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
         if(Run.GetBool("Attack"))   return;
@@ -116,12 +120,12 @@ public class Player_Movement : MonoBehaviour
 
     }
 
-    IEnumerator Camera_Shake(int cnt, float time, float power = 0.5f)
+    IEnumerator Camera_Shake(int cnt, int y_dir=-1, float power = 0.5f)
     {
         Vector3 initialPosition = cam.transform.position;
         for(int i=0; i<cnt; i++)
         {
-            cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(transform.localScale.x*power, -1*power,0), Time.deltaTime*15);
+            cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(transform.localScale.x*power, y_dir*power,0), Time.deltaTime*15);
             yield return new WaitForFixedUpdate();
         }
     }
