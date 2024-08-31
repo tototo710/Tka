@@ -49,6 +49,10 @@ public class Player_Movement : MonoBehaviour
     public GameObject impactEffect;
     void Update()
     {
+        if(transform.position.y<-50){
+            transform.position = new Vector2(0,0);
+        }
+
         if(Input.GetAxisRaw("Horizontal") != 0)
         {
             Run.SetBool("Run", true);
@@ -74,13 +78,13 @@ public class Player_Movement : MonoBehaviour
         if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
         {
             StartCoroutine(late_attack(4, 1, 1f, 0.012f));
-            rb.AddForce(new Vector2(6*transform.localScale.x, 0), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(4*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
         else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
         {
-            StartCoroutine(late_attack(4, 1, 2f, 0.012f));
-            rb.AddForce(new Vector2(5*transform.localScale.x, 10), ForceMode2D.Impulse);
+            StartCoroutine(late_attack(4, 1, 2f, .1f));
+            rb.AddForce(new Vector2(6*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
 
@@ -116,9 +120,6 @@ public class Player_Movement : MonoBehaviour
     public int dir = 1;
     void Move()
     {
-        if(transform.position.y<-50){
-            transform.position = new Vector2(0,0);
-        }
 
         
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
