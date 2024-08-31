@@ -61,6 +61,8 @@ public class Player_Movement : MonoBehaviour
         {
             Run.SetBool("Run", false);
         }
+        Debug.Log(Input.GetAxisRaw("Horizontal"));
+
         if(Mathf.Abs(rb.velocity.y)<0.0001f)
         {
             isGround = true;
@@ -120,16 +122,19 @@ public class Player_Movement : MonoBehaviour
     public int dir = 1;
     void Move()
     {
-
-        
         Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
         rb.velocity = clampedVelocity;
-        dir = rb.velocity.x > 0.1f?1:rb.velocity.x<0.1f?-1:0;
+        dir = (int)Input.GetAxisRaw("Horizontal");
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
+
+
+
+            
         }
-        float horizontalInput = Input.GetAxis("Horizontal"); // 수평 입력 값
+        Debug.Log(Input.GetAxis("Horizontal"));
+        float horizontalInput = Input.GetAxis("Horizontal") * (Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0 ? (Mathf.Abs(Input.GetAxis("Horizontal")) < 1f && Input.GetAxisRaw("Horizontal") == 0 ? 1 : 0)  : 1); // 수평 입력 값
         Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
 
         // 플레이어에게 가해지는 마찰력을 계산합니다.
