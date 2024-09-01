@@ -128,10 +128,6 @@ public class Player_Movement : MonoBehaviour
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
-
-
-
-            
         }
         Debug.Log(Input.GetAxis("Horizontal"));
         float horizontalInput = Input.GetAxis("Horizontal") * (Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0 ? (Mathf.Abs(Input.GetAxis("Horizontal")) < 1f && Input.GetAxisRaw("Horizontal") == 0 ? 1 : 0)  : 1); // 수평 입력 값
