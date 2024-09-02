@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UIElements;
 
-public class Player_Movement : MonoBehaviour
+public class old_playerMovement : MonoBehaviour
 {
     Animator Run;
     Animator jump;
@@ -30,7 +30,6 @@ public class Player_Movement : MonoBehaviour
 
     public PostProcessVolume volume;
     public bool on_delay = false;
-
 
     void Awake()
     {
@@ -77,21 +76,26 @@ public class Player_Movement : MonoBehaviour
 
 
         Attack();
-        if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
+        // if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
+        // {
+        //     rb.velocity = new Vector2(0, rb.velocity.y);
+        //     StartCoroutine(late_attack(4, 1, 1f, 0.024f));
+        //     rb.AddForce(new Vector2(4*transform.localScale.x, 0), ForceMode2D.Impulse);
+        //     Run.SetBool("shakecam", false);
+        // }
+        // else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
+        // {
+        //     rb.velocity = new Vector2(0, rb.velocity.y);
+        //     StartCoroutine(late_attack(4, 1, 2f, .1f));
+        //     rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
+        //     Run.SetBool("shakecam", false);
+        // }
+        if(Run.GetBool("wait_for_sec_sir"))
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
-            StartCoroutine(late_attack(4, 1, 1f, 0.024f));
-            rb.AddForce(new Vector2(4*transform.localScale.x, 0), ForceMode2D.Impulse);
-            Run.SetBool("shakecam", false);
+            StopCoroutine("DelayCoroutine");
+            StartCoroutine(DelayCoroutine(0.5f, Run.GetBool("on_attack")));
+            Run.SetBool("wait_for_sec_sir", false);
         }
-        else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
-        {
-            rb.velocity = new Vector2(0, rb.velocity.y);
-            StartCoroutine(late_attack(4, 1, 2f, .1f));
-            rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
-            Run.SetBool("shakecam", false);
-        }
-
         if(Run.GetBool("land_f_attack"))
         {
             StartCoroutine(Camera_Shake(1, -4, 01f));
@@ -115,6 +119,13 @@ public class Player_Movement : MonoBehaviour
                 Run.SetTrigger("jump");
             }
         }
+    }
+
+    IEnumerator DelayCoroutine(float delay, bool flag)
+    {
+        flag = true;
+        yield return new WaitForSeconds(delay);
+        flag = false;
     }
     void late_back()
     {
@@ -145,12 +156,34 @@ public class Player_Movement : MonoBehaviour
     }
     void Attack()
     {
+        // if(Input.GetMouseButtonDown(0) && isGround==true && (on_delay_attack==false || Run.GetBool("on_attack")))
+        // {   
+        //     if(Run.GetInteger("attackcnt") <4)
+        //     {
+        //         Run.SetInteger("attackcnt", Run.GetInteger("attackcnt")+1);
+        //         StartCoroutine(reset_check_delay());
+        //     }
+        //     else
+        //     {
+        //         Run.SetInteger("attackcnt", 0);
+        //         StopCoroutine("reset_check_delay");
+        //         on_delay_attack = false;
+        //     }
+        //     Run.SetTrigger("Attack");
+        // }
 
-        if(Input.GetMouseButtonDown(0) && Run.GetBool("onLastattack")==false && isGround==true)
+        if(Input.GetMouseButtonDown(0) && isGround && Run.GetBool("on_attack"))
         {
             Run.SetTrigger("Attack");
+            if(Run.GetInteger("attackcnt") <4)
+            {
+                StartCoroutine(late_attack(4, 1, 1f, 0.024f));
+            }
+            else
+            {
+                Run.SetInteger("attackcnt", 0);
+            }
         }
-
         if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
         {
             Run.SetTrigger("onkick");
@@ -164,6 +197,7 @@ public class Player_Movement : MonoBehaviour
             rb.velocity = new Vector2(0,rb.velocity.y);
         }
     }
+    public bool on_delay_attack = false;
     IEnumerator late_attack(int cnt, int y_dir=-1, float power = 0.5f, float delay = 0.4f/3f)
     {
         yield return new WaitForSeconds(delay);
