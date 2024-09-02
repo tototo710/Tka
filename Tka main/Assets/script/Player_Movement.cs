@@ -91,6 +91,8 @@ public class Player_Movement : MonoBehaviour
             rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
+    
+    
 
         if(Run.GetBool("land_f_attack"))
         {
