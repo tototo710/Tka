@@ -913,7 +913,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54183b969ac5f234cbe9770c641bca12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 115
+  speed: 100
   jumpingPower: 27
   friction: 6
   maxSpeed: 115
