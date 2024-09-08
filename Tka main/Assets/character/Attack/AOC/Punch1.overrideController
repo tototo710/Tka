@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Punch1
+  m_Controller: {fileID: 9100000, guid: c3a454ff3a2335541a1b61a0384a301e, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: ad678914ae23f43408e3462cdb0c376b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ad678914ae23f43408e3462cdb0c376b, type: 2}

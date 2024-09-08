@@ -105,6 +105,7 @@ public class Player_Movement : MonoBehaviour
             Instantiate(impactEffect, transform.position + new Vector3(-2.5f, 0, 0), Quaternion.identity);
             rb.velocity = new Vector2(0,0);
         }
+        if(Run.GetBool("onattacking"))  StartCoroutine(감속());
         if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack"))   return;
         Move();
         
@@ -116,6 +117,15 @@ public class Player_Movement : MonoBehaviour
                 Jump();
                 Run.SetTrigger("jump");
             }
+        }
+    }
+
+    IEnumerator 감속()
+    {
+        while(Mathf.Abs(rb.velocity.x)>0.1f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x*0.9f, rb.velocity.y);
+            yield return new WaitForFixedUpdate();
         }
     }
     void late_back()
@@ -148,10 +158,10 @@ public class Player_Movement : MonoBehaviour
     void Attack()
     {
 
-        if(Input.GetMouseButtonDown(0) && Run.GetBool("onLastattack")==false && isGround==true)
-        {
-            Run.SetTrigger("Attack");
-        }
+        // if(Input.GetMouseButtonDown(0) && Run.GetBool("onLastattack")==false && isGround==true)
+        // {
+        //     Run.SetTrigger("Attack");
+        // }
 
         if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
         {
