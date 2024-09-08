@@ -167,7 +167,7 @@ public class Player_Movement : MonoBehaviour
         // {
         //     Run.SetTrigger("Attack");
         // }
-        if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
+        if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true && !Input.GetKey(KeyCode.S))
         {
             rb.velocity = new Vector2(0,0);
             Run.SetTrigger("Strong_attack");
