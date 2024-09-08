@@ -57,7 +57,7 @@ public class Player_Movement : MonoBehaviour
             return;
         }
         if(transform.position.y<-50){
-            transform.position = new Vector2(0,0);
+            transform.position = new Vector2(0,01);
         }
 
         if(Input.GetAxisRaw("Horizontal") != 0)
@@ -169,6 +169,7 @@ public class Player_Movement : MonoBehaviour
         // }
         if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
         {
+            rb.velocity = new Vector2(0,0);
             Run.SetTrigger("Strong_attack");
             StartCoroutine(late_attack(4, 1, 4f, 0.4f));
             StartCoroutine(late_move(18, 0.4f));

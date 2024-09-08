@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GC : MonoBehaviour
 {
-    public bool isGround = false; // 플레이어가 바닥에 있는지 여부
+    public bool isGround = true; // 플레이어가 바닥에 있는지 여부
 
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.layer == 6)
