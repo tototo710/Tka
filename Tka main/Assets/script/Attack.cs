@@ -26,6 +26,7 @@ public class Attack : MonoBehaviour
         {
             Attack_();
         }
+        
         ExitAttack();
     }
     void Attack_()
@@ -41,7 +42,7 @@ public class Attack : MonoBehaviour
                 anim.Play("Punchs",0,0);
                 combocnt++;
                 last_attack_time = Time.time;
-                if(combocnt == attack_kind.Count-1)
+                if(combocnt == attack_kind.Count)
                 {
                     anim.SetBool("onLastattack", true);
                 }
