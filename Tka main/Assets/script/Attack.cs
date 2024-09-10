@@ -31,7 +31,7 @@ public class Attack : MonoBehaviour
     }
     void Attack_()
     {
-        GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0,GetComponent<Rigidbody2D>().velocity.y);
         if(Time.time - last_comboEnd > 0.5f * attack_kind[combocnt].speed && combocnt <= attack_kind.Count-1)
         {
             CancelInvoke("EndCombo");

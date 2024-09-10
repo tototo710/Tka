@@ -157,7 +157,7 @@ public class Player_Movement : MonoBehaviour
             transform.localScale = new Vector3(dir, 1, 1);
         }
         Debug.Log(Input.GetAxis("Horizontal"));
-        float horizontalInput = Input.GetAxis("Horizontal") * ((Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0) && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) ? 0 : 1);
+        float horizontalInput = Input.GetAxis("Horizontal") * (Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0 && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) ? 0 : 1);
         // if(Input.GetAxisRaw("Horizontal") == 0)
         // {
         //     rb.velocity = new Vector2(rb.velocity.x * 0.9f, rb.velocity.y);
