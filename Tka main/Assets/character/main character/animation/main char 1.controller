@@ -145,7 +145,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: jump_up
-  m_Speed: 0.4
+  m_Speed: 0.36
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1984125467761977208}
@@ -180,7 +180,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0
   m_TransitionOffset: 0
-  m_ExitTime: 0.2
+  m_ExitTime: 1
   m_HasExitTime: 1
   m_HasFixedDuration: 0
   m_InterruptionSource: 0
@@ -525,7 +525,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Strong_attack1
-  m_Speed: 0.05
+  m_Speed: 0.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 7917592639925939450}
@@ -732,7 +732,7 @@ AnimatorController:
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 0
+    m_DefaultBool: 1
     m_Controller: {fileID: 9100000}
   - m_Name: Attack
     m_Type: 9
@@ -853,7 +853,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 4
     m_ConditionEvent: y_speed
-    m_EventTreshold: -0.1
+    m_EventTreshold: -1
   m_DstStateMachine: {fileID: -4265451065284302759}
   m_DstState: {fileID: 0}
   m_Solo: 0
@@ -1310,7 +1310,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: jump_down
-  m_Speed: 0.6
+  m_Speed: 0.08
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -8995981803741232983}
@@ -1463,7 +1463,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Strong_attack2
-  m_Speed: 0.06
+  m_Speed: 0.3
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8601733144771599229}
@@ -1506,7 +1506,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -1599776166336589222}
-    m_Position: {x: 300, y: 230, z: 0}
+    m_Position: {x: 320, y: 290, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3778390886788204788}
     m_Position: {x: 700, y: 210, z: 0}
@@ -1782,7 +1782,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: jump_landing
-  m_Speed: 0.1
+  m_Speed: 0.25
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -7137033162821080466}

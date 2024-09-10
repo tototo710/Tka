@@ -413,7 +413,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.75, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1342175905}
@@ -1019,6 +1019,7 @@ MonoBehaviour:
   on_delay: 0
   gc: {fileID: 0}
   impactEffect: {fileID: 6413595198008232011, guid: 4126325680b66c34483a7d822e3a36c6, type: 3}
+  is_old_move: 0
   dir: 1
 --- !u!114 &1342175914
 MonoBehaviour:
