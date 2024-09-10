@@ -42,6 +42,7 @@ public class Attack : MonoBehaviour
                 anim.speed = attack_kind[combocnt].speed;
                 anim.Play("Punchs",0,0);
                 combocnt++;
+                Invoke("stop",0.2f);
                 last_attack_time = Time.time;
                 if(combocnt == attack_kind.Count)
                 {
@@ -59,6 +60,10 @@ public class Attack : MonoBehaviour
                 }
             }
         }
+    }
+    void stop()
+    {
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
     }
     void ExitAttack()
     {

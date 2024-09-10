@@ -61,7 +61,7 @@ public class Player_Movement : MonoBehaviour
             transform.position = new Vector2(0,01);
         }
 
-        if(Input.GetAxis("Horizontal")  != 0)
+        if(Input.GetAxis("Horizontal") * Mathf.Abs(Input.GetAxisRaw("Horizontal")) != 0)
         {
             Run.SetBool("Run", true);
         }
@@ -88,13 +88,13 @@ public class Player_Movement : MonoBehaviour
         if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
         {
             StartCoroutine(late_attack(4, 1, 1f, 0.024f));
-            rb.AddForce(new Vector2(4*transform.localScale.x, 0), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
         else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
         {
             StartCoroutine(late_attack(4, 1, 2f, .1f));
-            rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(16*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
     
@@ -157,26 +157,13 @@ public class Player_Movement : MonoBehaviour
             transform.localScale = new Vector3(dir, 1, 1);
         }
         Debug.Log(Input.GetAxis("Horizontal"));
-        float horizontalInput = Input.GetAxis("Horizontal") * (Mathf.Abs(Input.GetAxis("Horizontal")) < 1 && Input.GetAxisRaw("Horizontal") == 0 ? (Mathf.Abs(Input.GetAxis("Horizontal")) < 1f && Input.GetAxisRaw("Horizontal") == 0 ? 1 : 0)  : 1); // 수평 입력 값
-        // float horizontalInput = Input.GetAxis("Horizontal") * (Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0 ? 0 : 1);
-        Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
-        if(is_old_move)
+        float horizontalInput = Input.GetAxis("Horizontal");
+        if(Input.GetAxisRaw("Horizontal") == 0)
         {
-            // 플레이어에게 가해지는 마찰력을 계산합니다.
-            Vector2 frictionForce = new Vector2(-rb.velocity.x * friction, 0);
-            rb.AddForce(frictionForce, ForceMode2D.Force);
-
-
-            // 플레이어에게 이동 힘을 가합니다.
-            rb.AddForce(moveDirection * speed);
-
+            rb.velocity = new Vector2(rb.velocity.x * 0.9f, rb.velocity.y);
         }
-        else
-        {
-            rb.velocity = new Vector2(horizontalInput*16.5f, rb.velocity.y);
-        }
-
-
+        // Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
+        rb.velocity = new Vector2(horizontalInput*16.5f, rb.velocity.y);
         
     }
     void Attack()
