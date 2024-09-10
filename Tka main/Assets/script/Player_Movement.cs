@@ -157,11 +157,11 @@ public class Player_Movement : MonoBehaviour
             transform.localScale = new Vector3(dir, 1, 1);
         }
         Debug.Log(Input.GetAxis("Horizontal"));
-        float horizontalInput = Input.GetAxis("Horizontal");
-        if(Input.GetAxisRaw("Horizontal") == 0)
-        {
-            rb.velocity = new Vector2(rb.velocity.x * 0.9f, rb.velocity.y);
-        }
+        float horizontalInput = Input.GetAxis("Horizontal") * ((Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0) && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) ? 0 : 1);
+        // if(Input.GetAxisRaw("Horizontal") == 0)
+        // {
+        //     rb.velocity = new Vector2(rb.velocity.x * 0.9f, rb.velocity.y);
+        // }
         // Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
         rb.velocity = new Vector2(horizontalInput*16.5f, rb.velocity.y);
         
@@ -170,7 +170,7 @@ public class Player_Movement : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true && !Input.GetKey(KeyCode.S))
         {
-            rb.velocity = new Vector2(0,0);
+            rb.velocity = new Vector2(0,rb.velocity.y);
             Run.SetTrigger("Strong_attack");
             StartCoroutine(late_attack(4, 1, 4f, 0.4f));
             StartCoroutine(late_move(18, 0.4f));
@@ -179,7 +179,7 @@ public class Player_Movement : MonoBehaviour
         if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
         {
             Run.SetTrigger("onkick");
-            rb.velocity = new Vector2(0,0);
+            rb.velocity = new Vector2(0,rb.velocity.y);
             StartCoroutine(late_attack(4, 1, 4f, 0.4f/3f));
         }
         else if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==false)
