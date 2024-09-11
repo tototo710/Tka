@@ -55,7 +55,7 @@ public class Player_Movement : MonoBehaviour
         if(Run.GetBool("stop_player"))
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
-            Run.SetBool("stop_player", false);
+            Run.SetBool("stop_player", false); 
         }
 
         // if(move_ff)
@@ -182,7 +182,6 @@ public class Player_Movement : MonoBehaviour
         {
             rb.velocity = new Vector2(0,rb.velocity.y);
             Run.SetTrigger("Strong_attack");
-            Run.SetBool("on_strong_attack", true);
         }
 
         if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
