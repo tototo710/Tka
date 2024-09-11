@@ -9,10 +9,7 @@ using UnityEngine.UIElements;
 public class Player_Movement : MonoBehaviour
 {
     Animator Run;
-    Animator jump;
-    [SerializeField] float speed = 100; // 플레이어 이동 속도
     [SerializeField] float jumpingPower = 40; // 플레이어 점프 힘
-    [SerializeField] float friction = 20f; // 플레이어 마찰력
     [SerializeField] float maxSpeed = 100; // 플레이어 최대 속력
 
 
@@ -46,7 +43,7 @@ public class Player_Movement : MonoBehaviour
         // footC = groundCheck.GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         Run = GetComponent<Animator>();
-        jump = GetComponent<Animator>();
+        
     }
     public GameObject impactEffect;
     public bool is_old_move = false;
