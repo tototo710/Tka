@@ -88,13 +88,13 @@ public class Player_Movement : MonoBehaviour
         if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
         {
             StartCoroutine(late_attack(4, 1, 1f, 0.024f));
-            rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(10*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
         else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
         {
             StartCoroutine(late_attack(4, 1, 2f, .1f));
-            rb.AddForce(new Vector2(16*transform.localScale.x, 0), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(20*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
     
