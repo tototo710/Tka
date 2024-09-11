@@ -18,10 +18,6 @@ public class onstrong : StateMachineBehaviour
     //}
 
     // OnStateExit is called before OnStateExit is called on any state inside this state machine
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-       if(!isenter) animator.SetBool("on_strong_attack", false);
-    }
 
     // OnStateMove is called before OnStateMove is called on any state inside this state machine
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

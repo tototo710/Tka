@@ -105,8 +105,9 @@ public class Player_Movement : MonoBehaviour
             rb.AddForce(new Vector2(16*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
-        else if(Run.GetBool("shakecam") && Run.GetBool("on_strong_attack") && !Run.GetBool("onLastattack") && !Run.GetBool("stop_player"))
+        else if(Run.GetBool("shakecam") && Run.GetBool("on_strong_attack") && !Run.GetBool("stop_player"))
         {
+            Run.SetBool("on_strong_attack", true);
             StartCoroutine(Camera_Shake(4, 1, 1f));
             Run.SetBool("stop_player", false);
             StartCoroutine(late_move(10, 0.01f));      
