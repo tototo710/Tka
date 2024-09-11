@@ -52,17 +52,17 @@ public class Player_Movement : MonoBehaviour
     public bool is_old_move = false;
     void Update()
     {
-        if(Run.GetBool("stop_player") && !Run.GetBool("shakecam"))
+        if(Run.GetBool("stop_player"))
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
-            return;
+            Run.SetBool("stop_player", false);
         }
 
-        if(move_ff)
-        {
-            rb.AddForce(new Vector2(32*transform.localScale.x, 0), ForceMode2D.Impulse);
-            move_ff = false;
-        }
+        // if(move_ff)
+        // {
+        //     rb.AddForce(new Vector2(32*transform.localScale.x, 0), ForceMode2D.Impulse);
+        //     move_ff = false;
+        // }
 
         if(transform.position.y<-50){
             transform.position = new Vector2(0,1);
@@ -109,9 +109,9 @@ public class Player_Movement : MonoBehaviour
         {
             StartCoroutine(Camera_Shake(4, 1, 1f));
             Run.SetBool("stop_player", false);
+            StartCoroutine(late_move(10, 0.01f));      
             Run.SetBool("shakecam", false);
-            Run.SetBool("on_strong_attack", false);
-            move_ff = true;
+            // move_ff = true;
         }
         
 
@@ -127,7 +127,8 @@ public class Player_Movement : MonoBehaviour
             rb.velocity = new Vector2(0,0);
         }
         if(Run.GetBool("onattacking"))  StartCoroutine(감속());
-        if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack"))   return;
+        if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack") || Run.GetBool("on_strong_attack"))   return;
+
         Move();
         
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
