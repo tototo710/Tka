@@ -21,6 +21,7 @@ public class Attack : MonoBehaviour
         if(combocnt > attack_kind.Count-1)
         {
             combocnt = 0;
+            anim.speed = 1;
         }
         if(Input.GetMouseButtonDown(0) && anim.GetBool("onattacking") == false)
         {
@@ -47,6 +48,7 @@ public class Attack : MonoBehaviour
                 if(combocnt == attack_kind.Count)
                 {
                     anim.SetBool("onLastattack", true);
+                    combocnt = 0;
                 }
                 else
                 {
@@ -54,7 +56,7 @@ public class Attack : MonoBehaviour
                 }
                 if(combocnt > attack_kind.Count-1)
                 {
-                    
+                    anim.SetBool("onLastattack", false);
                     anim.speed = 1;
                     combocnt = 0;
                 }
@@ -71,6 +73,7 @@ public class Attack : MonoBehaviour
         {
             anim.speed = 1;
             Invoke("EndCombo",1f);
+            anim.SetBool("onLastattack", false);
         }
     }
     void EndCombo()

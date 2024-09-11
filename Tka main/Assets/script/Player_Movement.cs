@@ -68,16 +68,6 @@ public class Player_Movement : MonoBehaviour
             transform.position = new Vector2(0,1);
         }
 
-        if(Input.GetAxis("Horizontal") * Mathf.Abs(Input.GetAxisRaw("Horizontal")) != 0)
-        {
-            Run.SetBool("Run", true);
-        }
-        else
-        {
-            Run.SetBool("Run", false);
-        }
-        Debug.Log(Input.GetAxisRaw("Horizontal"));
-
         if(Mathf.Abs(rb.velocity.y)<0.01f && gc.isGround)
         {
             isGround = true;
@@ -92,27 +82,32 @@ public class Player_Movement : MonoBehaviour
 
 
         Attack();
+        
+        if(Run.GetBool("shakecam") && Run.GetBool("on_strong_attack") && !Run.GetBool("stop_player"))
+        {
+            Run.SetBool("onLastattack", false);    
+            Run.SetBool("shakecam", false);
+            Run.SetBool("on_strong_attack", true);
+            StartCoroutine(Camera_Shake(4, 1, 1f));
+            Run.SetBool("stop_player", false);
+            StartCoroutine(late_move(10, 0.01f));  
+            // move_ff = true;
+        }
 
         if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack") && !Run.GetBool("on_strong_attack"))
         {
             StartCoroutine(late_attack(4, 1, 1f, 0.024f));
             rb.AddForce(new Vector2(10*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
+            Run.SetBool("onLastattack", false);
         }
         else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack") && !Run.GetBool("on_strong_attack"))
         {
-            StartCoroutine(late_attack(4, 1, 2f, .1f));
+            Run.SetBool("onLastattack", false);
+            StartCoroutine(late_attack(6, 1, 2f, .1f));
             rb.AddForce(new Vector2(20*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
-        }
-        else if(Run.GetBool("shakecam") && Run.GetBool("on_strong_attack") && !Run.GetBool("stop_player"))
-        {
-            Run.SetBool("on_strong_attack", true);
-            StartCoroutine(Camera_Shake(4, 1, 1f));
-            Run.SetBool("stop_player", false);
-            StartCoroutine(late_move(10, 0.01f));      
-            Run.SetBool("shakecam", false);
-            // move_ff = true;
+            Run.SetBool("onLastattack", false);
         }
         
 
@@ -176,6 +171,16 @@ public class Player_Movement : MonoBehaviour
         // Vector2 moveDirection = new Vector2(horizontalInput, 0); // 이동 방향 벡터
         rb.velocity = new Vector2(horizontalInput*16.5f, rb.velocity.y);
         
+        if(Input.GetAxis("Horizontal") * Mathf.Abs(Input.GetAxisRaw("Horizontal")) != 0)
+        {
+            Run.SetBool("Run", true);
+        }
+        else 
+        {
+            Run.SetBool("Run", false);
+        }
+        Debug.Log(Input.GetAxisRaw("Horizontal"));
+
     }
     void Attack()
     {

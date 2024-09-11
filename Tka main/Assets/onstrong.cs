@@ -8,7 +8,8 @@ public class onstrong : StateMachineBehaviour
     // OnStateEnter is called before OnStateEnter is called on any state inside this state machine
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       if(isenter) animator.SetBool("on_strong_attack", true);
+      if(isenter) animator.SetBool("on_strong_attack", true);
+         else animator.SetBool("on_strong_attack", false);
     }
 
     // OnStateUpdate is called before OnStateUpdate is called on any state inside this state machine
