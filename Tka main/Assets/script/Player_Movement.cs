@@ -52,13 +52,20 @@ public class Player_Movement : MonoBehaviour
     public bool is_old_move = false;
     void Update()
     {
-        if(Run.GetBool("stop_player"))
+        if(Run.GetBool("stop_player") && !Run.GetBool("shakecam"))
         {
-            rb.velocity = new Vector2(0,0);
+            rb.velocity = new Vector2(0, rb.velocity.y);
             return;
         }
+
+        if(move_ff)
+        {
+            rb.AddForce(new Vector2(32*transform.localScale.x, 0), ForceMode2D.Impulse);
+            move_ff = false;
+        }
+
         if(transform.position.y<-50){
-            transform.position = new Vector2(0,01);
+            transform.position = new Vector2(0,1);
         }
 
         if(Input.GetAxis("Horizontal") * Mathf.Abs(Input.GetAxisRaw("Horizontal")) != 0)
@@ -85,20 +92,28 @@ public class Player_Movement : MonoBehaviour
 
 
         Attack();
-        if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack"))
+
+        if(Run.GetBool("shakecam") && !Run.GetBool("onLastattack") && !Run.GetBool("on_strong_attack"))
         {
             StartCoroutine(late_attack(4, 1, 1f, 0.024f));
             rb.AddForce(new Vector2(8*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
-        else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack"))
+        else if(Run.GetBool("shakecam") && Run.GetBool("onLastattack") && !Run.GetBool("on_strong_attack"))
         {
             StartCoroutine(late_attack(4, 1, 2f, .1f));
             rb.AddForce(new Vector2(16*transform.localScale.x, 0), ForceMode2D.Impulse);
             Run.SetBool("shakecam", false);
         }
-    
-    
+        else if(Run.GetBool("shakecam") && Run.GetBool("on_strong_attack") && !Run.GetBool("onLastattack") && !Run.GetBool("stop_player"))
+        {
+            StartCoroutine(Camera_Shake(4, 1, 1f));
+            Run.SetBool("stop_player", false);
+            Run.SetBool("shakecam", false);
+            Run.SetBool("on_strong_attack", false);
+            move_ff = true;
+        }
+        
 
         if(Run.GetBool("land_f_attack"))
         {
@@ -125,7 +140,8 @@ public class Player_Movement : MonoBehaviour
             }
         }
     }
-
+    public bool move_ff = false;
+    
     IEnumerator 감속()
     {
         while(Mathf.Abs(rb.velocity.x)>0.1f)
@@ -134,13 +150,6 @@ public class Player_Movement : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
     }
-    // {
-    //     while(Mathf.Abs(rb.velocity.x)>0.1f)
-    //     {
-    //         rb.velocity = new Vector2(rb.velocity.x*0.99f, rb.velocity.y);
-    //         yield return new WaitForFixedUpdate();
-    //     }
-    // }
     void late_back()
     {
         Run.SetBool("onattacking", false);
@@ -168,12 +177,11 @@ public class Player_Movement : MonoBehaviour
     }
     void Attack()
     {
-        if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true && !Input.GetKey(KeyCode.S))
+        if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true && !Input.GetKey(KeyCode.S) && !Run.GetBool("on_strong_attack"))
         {
             rb.velocity = new Vector2(0,rb.velocity.y);
             Run.SetTrigger("Strong_attack");
-            StartCoroutine(late_attack(4, 1, 4f, 0.4f));
-            StartCoroutine(late_move(18, 0.4f));
+            Run.SetBool("on_strong_attack", true);
         }
 
         if(Input.GetMouseButtonDown(1) && Input.GetKey(KeyCode.S) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true)
@@ -207,6 +215,8 @@ public class Player_Movement : MonoBehaviour
     IEnumerator late_move(float power, float delay)
     {
         yield return new WaitForSeconds(delay);
+        Run.SetBool("stop_player", false);
+        yield return new WaitForSeconds(0.001f);
         rb.AddForce(new Vector2(power*transform.localScale.x, 0), ForceMode2D.Impulse);
     }
     private void Jump()
