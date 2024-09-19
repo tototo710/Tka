@@ -764,7 +764,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -5
   m_Sprite: {fileID: 21300000, guid: a91b97d8cf8e6a548a03431fb50fe81d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -998,8 +998,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1.2
-  m_LinearDrag: 0
-  m_AngularDrag: 0
+  m_LinearDrag: 1
+  m_AngularDrag: 1
   m_GravityScale: 4.8
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -1090,10 +1090,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54183b969ac5f234cbe9770c641bca12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
-  jumpingPower: 27
-  friction: 6.05
-  maxSpeed: 115
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1104,6 +1100,7 @@ MonoBehaviour:
   gc: {fileID: 0}
   impactEffect: {fileID: 6413595198008232011, guid: 4126325680b66c34483a7d822e3a36c6, type: 3}
   is_old_move: 0
+  move_ff: 0
   dir: 1
 --- !u!114 &1342175914
 MonoBehaviour:

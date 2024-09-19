@@ -1,18 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using UnityEngine.UIElements;
+
 
 public class Player_Movement : MonoBehaviour
 {
     Animator Run;
-    [SerializeField] float jumpingPower = 40; // 플레이어 점프 힘
-    [SerializeField] float maxSpeed = 100; // 플레이어 최대 속력
-
-
+    float jumpingPower = 40; // 플레이어 점프 힘
     public LayerMask groundLayer; // 바닥 레이어
     // public Transform groundCheck; // 바닥 체크 위치
 
@@ -45,10 +41,12 @@ public class Player_Movement : MonoBehaviour
         Run = GetComponent<Animator>();
         
     }
+    
     public GameObject impactEffect;
     public bool is_old_move = false;
     void Update()
     {
+         
         if(Run.GetBool("stop_player"))
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
@@ -152,14 +150,11 @@ public class Player_Movement : MonoBehaviour
     public int dir = 1;
     void Move()
     {
-        Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
-        rb.velocity = clampedVelocity;
         dir = (int)Input.GetAxisRaw("Horizontal") * (int)Mathf.Abs(Input.GetAxisRaw("Horizontal"));
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
         }
-        Debug.Log(Input.GetAxis("Horizontal"));
         float horizontalInput = Input.GetAxis("Horizontal") * (Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0 && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) ? 0 : 1);
         // if(Input.GetAxisRaw("Horizontal") == 0)
         // {
@@ -176,7 +171,6 @@ public class Player_Movement : MonoBehaviour
         {
             Run.SetBool("Run", false);
         }
-        Debug.Log(Input.GetAxisRaw("Horizontal"));
 
     }
     void Attack()
@@ -214,6 +208,8 @@ public class Player_Movement : MonoBehaviour
             cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(transform.localScale.x*power, y_dir*power,0), Time.deltaTime*15);
             yield return new WaitForFixedUpdate();
         }
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     IEnumerator late_move(float power, float delay)
     {

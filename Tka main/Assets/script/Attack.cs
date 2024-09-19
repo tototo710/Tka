@@ -21,7 +21,7 @@ public class Attack : MonoBehaviour
         if(combocnt > attack_kind.Count-1)
         {
             combocnt = 0;
-            anim.speed = 1;
+            anim.SetFloat("punch_speed", 1);
         }
         if(Input.GetMouseButtonDown(0) && anim.GetBool("onattacking") == false)
         {
@@ -40,8 +40,10 @@ public class Attack : MonoBehaviour
             if(Time.time - last_attack_time >= 0.2f * attack_kind[combocnt].speed)
             {
                 anim.runtimeAnimatorController = attack_kind[combocnt].animator;
-                anim.speed = attack_kind[combocnt].speed;
+                // anim.speed = attack_kind[combocnt].speed;
+                anim.SetFloat("punch_speed", attack_kind[combocnt].speed);
                 anim.Play("Punchs",0,0);
+                GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
                 combocnt++;
                 Invoke("stop",0.2f);
                 last_attack_time = Time.time;
@@ -57,7 +59,7 @@ public class Attack : MonoBehaviour
                 if(combocnt > attack_kind.Count-1)
                 {
                     anim.SetBool("onLastattack", false);
-                    anim.speed = 1;
+                    anim.SetFloat("punch_speed", 1);
                     combocnt = 0;
                 }
             }
@@ -71,7 +73,7 @@ public class Attack : MonoBehaviour
     {
         if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
         {
-            anim.speed = 1;
+            anim.SetFloat("punch_speed", 1);
             Invoke("EndCombo",1f);
             anim.SetBool("onLastattack", false);
         }
@@ -80,6 +82,6 @@ public class Attack : MonoBehaviour
     {
         combocnt = 0;
         last_comboEnd = Time.time;
-        anim.speed = 1;
+        anim.SetFloat("punch_speed", 1);
     }
 }
