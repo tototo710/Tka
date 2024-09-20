@@ -23,7 +23,7 @@ public class Attack : MonoBehaviour
             combocnt = 0;
             anim.SetFloat("punch_speed", 1);
         }
-        if(Input.GetMouseButtonDown(0) && anim.GetBool("onattacking") == false)
+        if(Input.GetMouseButtonDown(0) && !anim.GetBool("onattacking") && !anim.GetBool("on_dash"))
         {
             Attack_();
         }

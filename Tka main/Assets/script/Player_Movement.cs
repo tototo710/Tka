@@ -118,7 +118,7 @@ public class Player_Movement : MonoBehaviour
         }
         if(Run.GetBool("onattacking"))  StartCoroutine(감속());
         if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack") || Run.GetBool("on_strong_attack"))   return;
-
+        if(Input.GetKeyDown(KeyCode.LeftShift)) StartCoroutine(dash());
         Move();
         
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -149,6 +149,7 @@ public class Player_Movement : MonoBehaviour
     public int dir = 1;
     void Move()
     {
+        if(on_dash) return;
         dir = (int)Input.GetAxisRaw("Horizontal") * (int)Mathf.Abs(Input.GetAxisRaw("Horizontal"));
         if(dir!=0)
         {
@@ -171,6 +172,24 @@ public class Player_Movement : MonoBehaviour
             Run.SetBool("Run", false);
         }
 
+    }
+    public bool on_dash = false;
+    public bool candash = true;
+    private IEnumerator dash()
+    {
+        if(!candash) yield return null;
+        candash = false;
+        on_dash = true;
+        Run.SetBool("on_dash", true);
+        rb.velocity = new Vector2(30 * transform.localScale.x, rb.velocity.y);
+        rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        yield return new WaitForSeconds(0.2f);
+        Run.SetBool("on_dash", false);
+        on_dash = false;
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        candash = true;
     }
     void Attack()
     {
