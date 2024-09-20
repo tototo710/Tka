@@ -8,12 +8,14 @@ public class Attack : MonoBehaviour
     float last_attack_time = 0;
     float last_comboEnd = 0;
     public int combocnt = 0;
+    RigidbodyConstraints2D i;
 
     Animator anim;
 
     void Start()
     {
         anim = GetComponent<Animator>();
+        i = GetComponent<RigidbodyConstraints2D>();
     }
 
     void Update()
@@ -33,6 +35,7 @@ public class Attack : MonoBehaviour
     void Attack_()
     {
         GetComponent<Rigidbody2D>().velocity = new Vector2(0,GetComponent<Rigidbody2D>().velocity.y);
+        i= RigidbodyConstraints2D.FreezePositionY;
         if(Time.time - last_comboEnd > 0.5f * attack_kind[combocnt].speed && combocnt <= attack_kind.Count-1)
         {
             CancelInvoke("EndCombo");
@@ -79,6 +82,7 @@ public class Attack : MonoBehaviour
     void EndCombo()
     {
         combocnt = 0;
+        i= RigidbodyConstraints2D.FreezePosition;
         last_comboEnd = Time.time;
         anim.speed = 1;
     }

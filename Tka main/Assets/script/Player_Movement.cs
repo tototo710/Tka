@@ -87,7 +87,7 @@ public class Player_Movement : MonoBehaviour
             Run.SetBool("on_strong_attack", true);
             StartCoroutine(Camera_Shake(4, 1, 1f));
             Run.SetBool("stop_player", false);
-            StartCoroutine(late_move(10, 0.01f));  
+            StartCoroutine(late_move(25, 0.01f));  
             // move_ff = true;
         }
 
