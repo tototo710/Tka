@@ -8,7 +8,7 @@ using UnityEngine.Rendering.PostProcessing;
 public class Player_Movement : MonoBehaviour
 {
     Animator Run;
-    float jumpingPower = 40; // 플레이어 점프 힘
+    float jumpingPower = 40; // 플레이어 점프 힘fajis
     public LayerMask groundLayer; // 바닥 레이어
     // public Transform groundCheck; // 바닥 체크 위치
 
@@ -46,7 +46,6 @@ public class Player_Movement : MonoBehaviour
     public bool is_old_move = false;
     void Update()
     {
-         
         if(Run.GetBool("stop_player"))
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
