@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using ImmersiveVRTools.Runtime.Common;
 using ImmersiveVRTools.Runtime.Common.Extensions;
 using ImmersiveVrToolsCommon.Runtime.Logging;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace FastScriptReload.Runtime
 {
@@ -85,7 +87,8 @@ namespace FastScriptReload.Runtime
                                      .Where(m => !ExcludeMethodsDefinedOnTypes.Contains(m.DeclaringType)))
                         {
                             var createdTypeMethodToUpdateFullDescriptionWithoutPatchedClassPostfix = RemoveClassPostfix(createdTypeMethodToUpdate.FullDescription());
-                            var matchingMethodInExistingType = allDeclaredMethodsInExistingType.SingleOrDefault(m => m.FullDescription() == createdTypeMethodToUpdateFullDescriptionWithoutPatchedClassPostfix);
+                            var matchingMethodInExistingType = allDeclaredMethodsInExistingType
+                                .SingleOrDefault(m => m.FullDescription() == createdTypeMethodToUpdateFullDescriptionWithoutPatchedClassPostfix);
                             if (matchingMethodInExistingType != null)
                             {
                                 if (matchingMethodInExistingType.IsGenericMethod)
@@ -114,13 +117,13 @@ namespace FastScriptReload.Runtime
                         }
                         
                         FindAndExecuteStaticOnScriptHotReloadNoInstance(createdType);
-                        FindAndExecuteOnScriptHotReload(matchingTypeInExistingAssemblies);
+                        FindAndExecuteOnScriptHotReload(matchingTypeInExistingAssemblies, createdType);
                     }
                     else
                     {
                         LoggerScoped.LogWarning($"FSR: Unable to find existing type for: '{createdType.FullName}', this is not an issue if you added new type. <color=orange>If it's an existing type please do a full domain-reload - one of optimisations is to cache existing types for later lookup on first call.</color>");
                         FindAndExecuteStaticOnScriptHotReloadNoInstance(createdType);
-                        FindAndExecuteOnScriptHotReload(createdType);
+                        FindAndExecuteOnScriptHotReload(createdType, createdType);
                     }
                 }
                 
@@ -169,23 +172,61 @@ namespace FastScriptReload.Runtime
             }
         }
 
-        private static void FindAndExecuteOnScriptHotReload(Type type)
+        private static void FindAndExecuteOnScriptHotReload(Type originalType, Type detourType)
         {
-            var onScriptHotReloadFnForType = type.GetMethod(ON_HOT_RELOAD_METHOD_NAME, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var onScriptHotReloadFnForType = originalType.GetMethod(ON_HOT_RELOAD_METHOD_NAME, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (onScriptHotReloadFnForType != null)
             {
-                UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                ExecuteFnOnMainThread(originalType, onScriptHotReloadFnForType);
+            }
+            else
+            { 
+                //When OnScriptHotReload method is not present in original type reflection can not use method from new type (as instance types are not matching and will cause exception)
+                //creating dynamic method and dotouring that solves the issue
+                //On some 2020 Unity versions, eg 2020.3.27f DynamicMethod can not be resolved. Using reflection to ensure it can be compiled and potentially run if methods exist
+                
+                var onScriptHotReloadFnForCreatedType = detourType.GetMethod(ON_HOT_RELOAD_METHOD_NAME, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (onScriptHotReloadFnForCreatedType != null)
                 {
-                    if (!typeof(MonoBehaviour).IsAssignableFrom(type)) {
-                        LoggerScoped.LogWarning($"Type: {type.Name} is not {nameof(MonoBehaviour)}, {ON_HOT_RELOAD_METHOD_NAME} method can't be executed. You can still use static version: {ON_HOT_RELOAD_NO_INSTANCE_STATIC_METHOD_NAME}");
+                    //PERF: could potentially cache, negligible overhead
+                    var dynamicMethodType = Type.GetType("System.Reflection.Emit.DynamicMethod");
+                    if (dynamicMethodType == null)
+                    {
+                        LoggerScoped.LogWarning($"Unable to find DynamicMethod, added {ON_HOT_RELOAD_METHOD_NAME} won't be called. Make sure to add method before initial compilation.");
                         return;
                     }
-                    foreach (var instanceOfType in GameObject.FindObjectsOfType(type)) //TODO: perf - could find them in different way?
-                    {
-                        onScriptHotReloadFnForType.Invoke(instanceOfType, null);
-                    }
-                });
+                    
+                    var dynamicMethodCtor = dynamicMethodType.GetConstructor(new Type[] { typeof(string), typeof(Type), typeof(Type[]) });
+                    var dynamicMethodDynamicallyAdded = (MethodInfo)dynamicMethodCtor.Invoke(new object[] { ON_HOT_RELOAD_METHOD_NAME + "_DynamicallyAdded", typeof(void), new Type[] { } });
+                
+                    var getILGeneratorMethod = dynamicMethodType.GetMethod("GetILGenerator", new Type[] { });
+                    var gen = getILGeneratorMethod.Invoke(dynamicMethodDynamicallyAdded, new object[]{ });
+                
+                    var emitMethod = gen.GetType().GetMethod("Emit", new [] { typeof(OpCode) });
+                    emitMethod.Invoke(gen, new object[] { OpCodes.Ret }); //simple return to ensure IL is valid
+                    
+                    Memory.DetourMethod(dynamicMethodDynamicallyAdded, onScriptHotReloadFnForCreatedType);
+
+                    ExecuteFnOnMainThread(originalType, dynamicMethodDynamicallyAdded);
+                }
             }
+        }
+
+        private static void ExecuteFnOnMainThread(Type originalType, MethodInfo onScriptHotReloadFn)
+        {
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                if (!typeof(MonoBehaviour).IsAssignableFrom(originalType))
+                {
+                    LoggerScoped.LogWarning($"Type: {originalType.Name} is not {nameof(MonoBehaviour)}, {ON_HOT_RELOAD_METHOD_NAME} method can't be executed. You can still use static version: {ON_HOT_RELOAD_NO_INSTANCE_STATIC_METHOD_NAME}");
+                    return;
+                }
+
+                foreach (var instanceOfType in GameObject.FindObjectsOfType(originalType)) //TODO: perf - could find them in different way?
+                {
+                    onScriptHotReloadFn.Invoke(instanceOfType, null);
+                }
+            });
         }
 
         private static string RemoveClassPostfix(string fqdn)
@@ -225,9 +266,10 @@ namespace FastScriptReload.Runtime
             IsDidFieldsOrPropertyCountChangedCheckDisabled = isDidFieldsOrPropertyCountChangedCheckDisabled;
             EnableExperimentalAddedFieldsSupport = enableExperimentalAddedFieldsSupport;
         }
+        
 #pragma warning disable 0618
         [Obsolete("Needed for network serialization")]
-#pragma warning enable 0618
+#pragma warning restore 0618
         public AssemblyChangesLoaderEditorOptionsNeededInBuild()
         {
         }

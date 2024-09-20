@@ -1,18 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using UnityEngine.UIElements;
+
 
 public class Player_Movement : MonoBehaviour
 {
     Animator Run;
-    [SerializeField] float jumpingPower = 40; // 플레이어 점프 힘
-    [SerializeField] float maxSpeed = 100; // 플레이어 최대 속력
-
-
+    float jumpingPower = 40; // 플레이어 점프 힘fajis
     public LayerMask groundLayer; // 바닥 레이어
     // public Transform groundCheck; // 바닥 체크 위치
 
@@ -45,6 +41,7 @@ public class Player_Movement : MonoBehaviour
         Run = GetComponent<Animator>();
         
     }
+    
     public GameObject impactEffect;
     public bool is_old_move = false;
     void Update()
@@ -121,7 +118,7 @@ public class Player_Movement : MonoBehaviour
         }
         if(Run.GetBool("onattacking"))  StartCoroutine(감속());
         if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack") || Run.GetBool("on_strong_attack"))   return;
-
+        if(Input.GetKeyDown(KeyCode.LeftShift)) StartCoroutine(dash());
         Move();
         
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
@@ -152,14 +149,12 @@ public class Player_Movement : MonoBehaviour
     public int dir = 1;
     void Move()
     {
-        Vector2 clampedVelocity = new Vector2(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y);
-        rb.velocity = clampedVelocity;
+        if(on_dash) return;
         dir = (int)Input.GetAxisRaw("Horizontal") * (int)Mathf.Abs(Input.GetAxisRaw("Horizontal"));
         if(dir!=0)
         {
             transform.localScale = new Vector3(dir, 1, 1);
         }
-        Debug.Log(Input.GetAxis("Horizontal"));
         float horizontalInput = Input.GetAxis("Horizontal") * (Input.GetAxis("Horizontal") != 0 && Input.GetAxisRaw("Horizontal") == 0 && (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) ? 0 : 1);
         // if(Input.GetAxisRaw("Horizontal") == 0)
         // {
@@ -176,8 +171,25 @@ public class Player_Movement : MonoBehaviour
         {
             Run.SetBool("Run", false);
         }
-        Debug.Log(Input.GetAxisRaw("Horizontal"));
 
+    }
+    public bool on_dash = false;
+    public bool candash = true;
+    private IEnumerator dash()
+    {
+        if(!candash) yield return null;
+        candash = false;
+        on_dash = true;
+        Run.SetBool("on_dash", true);
+        rb.velocity = new Vector2(30 * transform.localScale.x, rb.velocity.y);
+        rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        yield return new WaitForSeconds(0.2f);
+        Run.SetBool("on_dash", false);
+        on_dash = false;
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        candash = true;
     }
     void Attack()
     {
@@ -214,6 +226,8 @@ public class Player_Movement : MonoBehaviour
             cam.transform.position = Vector3.Lerp(cam.transform.position, initialPosition + new Vector3(transform.localScale.x*power, y_dir*power,0), Time.deltaTime*15);
             yield return new WaitForFixedUpdate();
         }
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     IEnumerator late_move(float power, float delay)
     {
