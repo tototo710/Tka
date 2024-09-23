@@ -48,7 +48,7 @@ public class Player_Movement : MonoBehaviour
     {
         if(Run.GetBool("stop_player"))
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
+            // rb.velocity = new Vector2(0, rb.velocity.y);
             Run.SetBool("stop_player", false); 
         }
 
@@ -116,7 +116,7 @@ public class Player_Movement : MonoBehaviour
             Instantiate(impactEffect, transform.position + new Vector3(-2.5f, 0, 0), Quaternion.identity);
             rb.velocity = new Vector2(0,0);
         }
-        if(Run.GetBool("onattacking"))  StartCoroutine(감속());
+        // if(Run.GetBool("onattacking"))  StartCoroutine(감속());
         if(Run.GetBool("onattacking") || Run.GetBool("on_land_attack") || Run.GetBool("on_strong_attack"))   return;
         if(Input.GetKeyDown(KeyCode.LeftShift)) StartCoroutine(dash());
         Move();
@@ -177,7 +177,7 @@ public class Player_Movement : MonoBehaviour
     public bool candash = true;
     private IEnumerator dash()
     {
-        if(!candash) yield return null;
+        if(!candash)    yield break;
         candash = false;
         on_dash = true;
         Run.SetBool("on_dash", true);
@@ -189,6 +189,7 @@ public class Player_Movement : MonoBehaviour
         on_dash = false;
         rb.constraints = RigidbodyConstraints2D.None;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        yield return new WaitForSeconds(0.5f);
         candash = true;
     }
     void Attack()
@@ -196,6 +197,7 @@ public class Player_Movement : MonoBehaviour
         if(Input.GetMouseButtonDown(1) && Run.GetBool("onattacking")==false && Run.GetBool("on_ground")==true && !Input.GetKey(KeyCode.S) && !Run.GetBool("on_strong_attack"))
         {
             rb.velocity = new Vector2(0,rb.velocity.y);
+            StartCoroutine(감속());
             Run.SetTrigger("Strong_attack");
         }
 
