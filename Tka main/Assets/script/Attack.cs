@@ -23,7 +23,7 @@ public class Attack : MonoBehaviour
             combocnt = 0;
             anim.SetFloat("punch_speed", 1);
         }
-        if(Input.GetMouseButtonDown(0) && !anim.GetBool("onattacking") && !anim.GetBool("on_dash"))
+        if(Input.GetMouseButtonDown(0) && !anim.GetBool("on_dash") && (!anim.GetBool("onattacking") || anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack")))
         {
             Attack_();
         }
@@ -32,20 +32,21 @@ public class Attack : MonoBehaviour
     }
     void Attack_()
     {
-        GetComponent<Rigidbody2D>().velocity = new Vector2(0,GetComponent<Rigidbody2D>().velocity.y);
+        // GetComponent<Rigidbody2D>().velocity = new Vector2(0,GetComponent<Rigidbody2D>().velocity.y);
         if(Time.time - last_comboEnd > 0.5f * attack_kind[combocnt].speed && combocnt <= attack_kind.Count-1)
         {
             CancelInvoke("EndCombo");
-
-            if(Time.time - last_attack_time >= 0.2f * attack_kind[combocnt].speed)
+            if(Time.time - last_attack_time >= 0.3f * attack_kind[combocnt].speed)
             {
                 anim.runtimeAnimatorController = attack_kind[combocnt].animator;
                 // anim.speed = attack_kind[combocnt].speed;
                 anim.SetFloat("punch_speed", attack_kind[combocnt].speed);
-                anim.Play("Punchs",0,0);
+                anim.Play("idle",0,0);
+                anim.Play("Punchs", 0, 0);
                 GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
+                GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                 combocnt++;
-                Invoke("stop",0.2f);
+                // Invoke("stop",0.2f);
                 last_attack_time = Time.time;
                 if(combocnt == attack_kind.Count)
                 {
@@ -63,15 +64,16 @@ public class Attack : MonoBehaviour
                     combocnt = 0;
                 }
             }
+
         }
     }
-    void stop()
-    {
-        GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
-    }
+    // void stop()
+    // {
+    //     // GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
+    // }
     void ExitAttack()
     {
-        if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
+        if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
         {
             anim.SetFloat("punch_speed", 1);
             Invoke("EndCombo",1f);
